@@ -13,4 +13,5 @@ class Timer
     Timer(const char*, std::string, unsigned int, sf::Vector2f*, sf::Color*, sf::RenderWindow*&);
         ~Timer();
     float GetTimer() const;
+    void Update(float);
 };

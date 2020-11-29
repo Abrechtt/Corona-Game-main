@@ -23,3 +23,10 @@ float Timer::GetTimer() const
 {
     return timer;
 }
+
+void Timer::Update(float currenttime)
+{
+    timer += currenttime;
+    timerText->setString(std::to_string(timer));
+    window->draw(*timerText);
+}

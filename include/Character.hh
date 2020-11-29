@@ -21,3 +21,4 @@ class Character : public GameObject
         Animation* GetAnimation(int) const;
         void Move(b2Vec2*);
 };
+

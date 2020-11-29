@@ -17,6 +17,8 @@
 #define GAME_NAME "Corona Game"
 #define TILES1 "assets/sprites/tiles1.png"
 #define TILES2 "assets/sprites/tiles2.png"
+#define WIN "assets/sprites/WIN.png"
+#define LOSE "assets/sprites/LOSE.png"
 #define FONT1 "assets/fonts/8-bit Arcade In.ttf"
 #define ICON "assets/GelIcon.png"
 #define BG_MUSIC "assets/audio/bgmusic.ogg"
@@ -42,6 +44,7 @@ int main()
     sound->play();
 
     Score* score{new Score(FONT1, "SCORE ", 24, new sf::Vector2f(25, 5), new sf::Color(255, 255, 255), window)};
+    Timer* timerGUI{new Timer(FONT1, "TIMER ", 24, new sf::Vector2f(550, 5), new sf::Color(255, 255, 255), window)};
 
     //physics declaration
     b2Vec2* gravity{new b2Vec2(0.f, 0.f)};
@@ -50,7 +53,8 @@ int main()
     sf::Clock* clock{new sf::Clock()};
     float deltaTime{};
     float timer{};
-
+    bool GameStop{false};
+    
     window->setFramerateLimit(FPS);
     //Game inputs
     Inputs* inputs{new Inputs()};
@@ -224,37 +228,49 @@ int main()
         character1->Update();
 
         score->Update();
+        timerGUI->Update(timer);
 
         window->display(); //mostrar en pantalla lo que se va dibujar
-
+        sf::Text text;
+        window->draw(text);
+        text.setString("HOLA MUNDO");
+        text.setCharacterSize(90);
+        text.setFillColor(sf::Color::Red);
+        text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+        
         sf::Time timeElapsed = clock->getElapsedTime();
         deltaTime = timeElapsed.asMilliseconds();
-        timer += timeElapsed.asSeconds();
+        if (score->GetScorePoints() == 60)
+        {
+            std::cout << "Win" << std::endl;
+            timer = 0.f;
+            window->close();
+            //GameStop = true;   
+        }
+        else
+        {
+            //GameStop = true; 
+            timer = timeElapsed.asSeconds();
+        }
         world->ClearForces();
         world->Step(1.f / 100 * deltaTime, 8, 8);
         clock->restart();
 
         //Timer* timer{new Timer(FONT1, "TIMER ", 24, new sf::Vector2f(25, 7), new sf::Color(255, 255, 255), window)};
 
-        //std::cout << "timecount " << timecount << std::endl; 
+        //std::cout << "timecount " << timer << std::endl; 
         
         //std::cout << "delta time: " << deltaTime << std::endl;
 
-        sf::Font timer;
-
-        if (!timer.loadFromFile("arial.ttf"))
-        {
-            Timer* timer{new Timer(FONT1, "TIMER ", 24, new sf::Vector2f(25, 7), new sf::Color(255, 255, 255), window)};
-        }
-        
-
         delete keyboardAxis;
         delete joystickAxis;
-
-        if (score->GetScorePoints() == 60)
+    
+        if (timerGUI->GetTimer() >= 15.f)
         {
+            std::cout << "Game Over " << std::endl;
             window->close();
         }
+        
 
     }
     
